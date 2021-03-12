@@ -137,4 +137,7 @@ def generate_pdf():
 if __name__ == "__main__":
     bottle.TEMPLATE_PATH = [ROOT.joinpath("templates")]
 
-    run(host="localhost", port=8080)
+    if "HEROKU" in os.environ:
+        run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    else:
+        run(host="localhost", port=8080)
