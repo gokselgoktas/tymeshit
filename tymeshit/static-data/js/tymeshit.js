@@ -382,15 +382,43 @@ function createInteractions() {
                         return;
                     }
 
-                    navigator.clipboard.writeText(data).then(
-                        () => {
-                            spawnCloud('👍');
-                        },
+                    const clipboard = navigator.clipboard;
+                    const permissions = navigator.permissions;
 
-                        () => {
-                            spawnCloud('👎');
-                        }
-                    );
+                    if (typeof clipboard !== typeof undefined && typeof permissions !== typeof undefined) {
+                        permissions.query({ name: 'clipboard-write' }).then((result) => {
+                            if (result.state === 'granted') {
+                                clipboard.writeText(data).then(() => spawnCloud('👍'), () => spawnCloud('👎'));
+                            } else if (result.state === 'prompt') {
+                                spawnCloud('☹️');
+                            } else {
+                                spawnCloud('👎');
+                            }
+                        });
+
+                        return;
+                    }
+
+                    const span = document.createElement('span');
+                    span.className = 'visually-hidden';
+                    span.textContent = data;
+
+                    document.body.appendChild(span);
+
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+
+                    const range = document.createRange();
+                    range.selectNode(span);
+
+                    selection.addRange(range);
+
+                    document.execCommand('copy');
+
+                    selection.removeAllRanges();
+                    document.body.removeChild(span)
+
+                    spawnCloud('👍');
                 }
             );
         }
