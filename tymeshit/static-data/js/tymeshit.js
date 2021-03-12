@@ -288,7 +288,7 @@ function createInteractions() {
 
     let isCloudAnimationPlaying = false;
 
-    const spawnCloud = () => {
+    const spawnCloud = (status) => {
         anime.set(ANIMATION_CONTROLLER, { cloudTranslation: 500.0, emoji: '🥱' })
 
         anime({
@@ -312,7 +312,7 @@ function createInteractions() {
 
                 {
                     cloudTranslation: -160.0,
-                    emoji: '👍',
+                    emoji: status,
 
                     duration: 500.0,
                 },
@@ -344,6 +344,11 @@ function createInteractions() {
         });
     }
 
+    const month = $('#side-panel .month');
+    const year = $('#side-panel .year');
+
+    const fakery = $('#side-panel .fakery');
+
     $(document).mousedown((eventData) => {
         if (isCloudAnimationPlaying === true) {
             return;
@@ -362,14 +367,35 @@ function createInteractions() {
 
         if (Math.sqrt(x * x + y * y) < radius) {
             spawnParticles(eventData);
-            spawnCloud();
+
+            let postData = {
+                month: month.val(),
+                year: year.val(),
+
+                fakery: fakery.val()
+            };
+
+            $.post('/generate/inline-google-docs-string', postData,
+                (data, status) => {
+                    if (status !== 'success') {
+                        spawnCloud('👎');
+                        return;
+                    }
+
+                    navigator.clipboard.writeText(data).then(
+                        () => {
+                            spawnCloud('👍');
+                        },
+
+                        () => {
+                            spawnCloud('👎');
+                        }
+                    );
+                }
+            );
         }
     });
 
-    const month = $('#side-panel .month');
-    const year = $('#side-panel .year');
-
-    const fakery = $('#side-panel .fakery');
     const smiley = $('#side-panel .emoji.smiley');
 
     month.on('input change', function () {
