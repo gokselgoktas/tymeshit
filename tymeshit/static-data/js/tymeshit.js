@@ -41,7 +41,7 @@ $.fn.fitText = function (textMetrics) {
     const x = this.width() / textMetrics.width;
     const y = this.height() / textMetrics.height;
 
-    const selector = ($(window).width() - 576.0) / 992.0;
+    const selector = ($(window).innerWidth() - 576.0) / 992.0;
     const weight = interpolate(0.85, 0.75, saturate(selector));
 
     const scalar = Math.min(x, y) * weight;
@@ -631,8 +631,8 @@ function createIllustration() {
     const render = () => {
         context.save();
 
-        const width = $(window).width();
-        const height = $(window).height();
+        const width = $(window).innerWidth();
+        const height = $(window).innerHeight();
 
         ILLUSTRATION.scale = 0.5 + 0.5 * clamp(width - 991.98, 0.0, 1.0);
 
