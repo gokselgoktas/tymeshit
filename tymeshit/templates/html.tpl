@@ -85,7 +85,7 @@
             <nav class="navbar navbar-dark m-0 p-0">
                 <div class="container-fluid m-0 p-0">
                     <button class="navbar-brand navbar-toggler m-0 p-0 border-0 shadow-none" href="{{uri}}">
-                        <h1><span class="time">{{time_emoji}}</span><span class="pile-of-poo">💩</span></h1>
+                        <h1><span class="time">🕐</span><span class="pile-of-poo">💩</span></h1>
                     </button>
                 </div>
             </nav>
