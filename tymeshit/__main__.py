@@ -89,6 +89,11 @@ def serve_svg(filename):
     return static_file(filename, root=ROOT.joinpath("static-data", "svg"), mimetype="image/svg+xml")
 
 
+@route(r"/static-data/png/<filename:re:.*\.png>")
+def serve_png(filename):
+    return static_file(filename, root=ROOT.joinpath("static-data", "png"), mimetype="image/png")
+
+
 @route(r"/generate/inline-google-docs-string", method="POST")
 def generate_inline_google_docs_string():
     month = int(request.POST.month) + 1

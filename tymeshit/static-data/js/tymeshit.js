@@ -349,9 +349,9 @@ function createInteractions() {
 
     const fakery = $('#side-panel .fakery');
 
-    $(document).mousedown((eventData) => {
+    const isPointerOverStar = (eventData) => {
         if (isCloudAnimationPlaying === true) {
-            return;
+            return false;
         }
 
         let x = eventData.clientX || eventData.touches[0].clientX;
@@ -365,63 +365,69 @@ function createInteractions() {
 
         const radius = 125.0 * ILLUSTRATION.scale;
 
-        if (Math.sqrt(x * x + y * y) < radius) {
-            spawnParticles(eventData);
+        return Math.sqrt(x * x + y * y) < radius;
+    }
 
-            let postData = {
-                month: month.val(),
-                year: year.val(),
-
-                fakery: fakery.val()
-            };
-
-            $.post('/generate/inline-google-docs-string', postData,
-                (data, status) => {
-                    if (status !== 'success') {
-                        spawnCloud('👎');
-                        return;
-                    }
-
-                    const clipboard = navigator.clipboard;
-                    const permissions = navigator.permissions;
-
-                    if (typeof clipboard !== typeof undefined && typeof permissions !== typeof undefined) {
-                        permissions.query({ name: 'clipboard-write' }).then((result) => {
-                            if (result.state === 'granted') {
-                                clipboard.writeText(data).then(() => spawnCloud('👍'), () => spawnCloud('👎'));
-                            } else if (result.state === 'prompt') {
-                                spawnCloud('☹️');
-                            } else {
-                                spawnCloud('👎');
-                            }
-                        });
-
-                        return;
-                    }
-
-                    const span = document.createElement('span');
-                    span.className = 'visually-hidden';
-                    span.textContent = data;
-
-                    document.body.appendChild(span);
-
-                    const selection = window.getSelection();
-                    selection.removeAllRanges();
-
-                    const range = document.createRange();
-                    range.selectNode(span);
-
-                    selection.addRange(range);
-
-                    document.execCommand('copy');
-
-                    selection.removeAllRanges();
-                    document.body.removeChild(span)
-
-                    spawnCloud('👍');
-                }
-            );
+    $(document).mousedown((eventData) => {
+        if (isPointerOverStar(eventData) === false) {
+            return;
         }
+
+        spawnParticles(eventData);
+
+        let postData = {
+            month: month.val(),
+            year: year.val(),
+
+            fakery: fakery.val()
+        };
+
+        $.post('/generate/inline-google-docs-string', postData,
+            (data, status) => {
+                if (status !== 'success') {
+                    spawnCloud('👎');
+                    return;
+                }
+
+                const clipboard = navigator.clipboard;
+                const permissions = navigator.permissions;
+
+                if (typeof clipboard !== typeof undefined && typeof permissions !== typeof undefined) {
+                    permissions.query({ name: 'clipboard-write' }).then((result) => {
+                        if (result.state === 'granted') {
+                            clipboard.writeText(data).then(() => spawnCloud('👍'), () => spawnCloud('👎'));
+                        } else if (result.state === 'prompt') {
+                            spawnCloud('☹️');
+                        } else {
+                            spawnCloud('👎');
+                        }
+                    });
+
+                    return;
+                }
+
+                const span = document.createElement('span');
+                span.className = 'visually-hidden';
+                span.textContent = data;
+
+                document.body.appendChild(span);
+
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+
+                const range = document.createRange();
+                range.selectNode(span);
+
+                selection.addRange(range);
+
+                document.execCommand('copy');
+
+                selection.removeAllRanges();
+                document.body.removeChild(span)
+
+                spawnCloud('👍');
+            }
+        );
     });
 
     const smiley = $('#side-panel .emoji.smiley');
