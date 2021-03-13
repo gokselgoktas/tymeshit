@@ -86,7 +86,7 @@ def serve_js():
 
 @route(r"/static-data/svg/<filename:re:.*\.svg>")
 def serve_svg(filename):
-    return static_file("confetti-doodles.svg", root=ROOT.joinpath("static-data", "svg"), mimetype="image/svg+xml")
+    return static_file(filename, root=ROOT.joinpath("static-data", "svg"), mimetype="image/svg+xml")
 
 
 @route(r"/generate/inline-google-docs-string", method="POST")
