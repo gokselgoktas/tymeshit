@@ -97,9 +97,7 @@ function adjustCanvasSize() {
     canvas.style.height = height + 'px';
 }
 
-function getTimeAsUnicodeEmoji() {
-    const date = new Date();
-
+function getTimeAsUnicodeEmoji(date) {
     const oneOClock = 0x1f550;
 
     let hourOffset = (date.getHours() - 1) % 12;
@@ -113,8 +111,16 @@ function getTimeAsUnicodeEmoji() {
     return String.fromCodePoint(codePoint);
 }
 
-function setTime() {
-    $('.time').text(getTimeAsUnicodeEmoji());
+function setTimeEmoji() {
+    const date = new Date();
+    const emoji = getTimeAsUnicodeEmoji(date);
+
+    $('.time').text(emoji);
+
+    let numberOfMinutesUntilNextTimeout = 30.1 - date.getMinutes();
+    numberOfMinutesUntilNextTimeout += 15.05 * (1.0 + Math.sign(numberOfMinutesUntilNextTimeout));
+
+    setTimeout(setTimeEmoji, Math.ceil(numberOfMinutesUntilNextTimeout * 60000.0));
 }
 
 function setDisplayData(month, year) {
@@ -746,7 +752,7 @@ $(document).ready(() => {
     adjustCanvasSize();
 
     setDisplayData();
-    setTime();
+    setTimeEmoji();
 
     createClearLoop();
     createInteractions();
